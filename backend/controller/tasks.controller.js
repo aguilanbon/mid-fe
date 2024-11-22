@@ -3,7 +3,7 @@ import pool from "../config/db.js";
 export const fetchTasks = async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM tasks");
-    res.json(result.rows);
+    res.status(201).json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

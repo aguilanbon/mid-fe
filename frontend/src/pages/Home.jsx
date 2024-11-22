@@ -48,6 +48,7 @@ export default function Home() {
           {tasks.map((task, index) => (
             <TaskCard
               key={index}
+              id={task.id}
               title={task.title}
               description={task.description}
             />

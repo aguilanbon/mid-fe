@@ -14,7 +14,8 @@ export default function Home() {
         const response = await fetch("http://localhost:3000/api/tasks");
         if (response.ok) {
           const data = await response.json();
-          setTasks(data);
+          const sortedTasks = sortTasks(data);
+          setTasks(sortedTasks);
         }
       } catch (error) {
         console.log(error);
@@ -25,6 +26,24 @@ export default function Home() {
 
     fetchTasks();
   }, []);
+
+  const sortTasks = (taskList) => {
+    return [...taskList].sort((a, b) => {
+      if (a.completed !== b.completed) {
+        return a.completed ? 1 : -1;
+      }
+      return b.id - a.id;
+    });
+  };
+
+  const handleToggleComplete = (taskId) => {
+    setTasks((prevTasks) => {
+      const updatedTasks = prevTasks.map((task) =>
+        task.id === taskId ? { ...task, completed: !task.completed } : task
+      );
+      return sortTasks(updatedTasks);
+    });
+  };
 
   if (loading) return <LoadingIndicator />;
 
@@ -39,13 +58,12 @@ export default function Home() {
             Create Task
           </Link>
         </div>
-        <div className="grid grid-cols-1 place-items-center items-center md:grid-cols-2  gap-6">
-          {tasks.map((task, index) => (
+        <div className="grid grid-cols-1 place-items-center items-center md:grid-cols-2 gap-6">
+          {tasks.map((task) => (
             <TaskCard
-              key={index}
-              id={task.id}
-              title={task.title}
-              description={task.description}
+              key={task.id}
+              task={task}
+              onToggleComplete={handleToggleComplete}
             />
           ))}
         </div>

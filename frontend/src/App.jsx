@@ -22,6 +22,14 @@ function App() {
         </Layout>
       ),
     },
+    {
+      path: "/edit/:id",
+      element: (
+        <Layout>
+          <CreateEdit />
+        </Layout>
+      ),
+    },
   ]);
 
   return <RouterProvider router={router} />;

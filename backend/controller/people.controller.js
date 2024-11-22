@@ -38,7 +38,7 @@ export const updatePerson = async (req, res) => {
     }
 
     res
-      .status(200)
+      .status(201)
       .json({ message: "Person updated successfully", data: result.rows[0] });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -56,8 +56,21 @@ export const deletePerson = async (req, res) => {
       return res.status(404).json({ message: "Person not found" });
     }
     res
-      .status(200)
+      .status(201)
       .json({ message: "Person deleted successfully", data: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const findPerson = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query("SELECT * FROM people WHERE id = $1", [id]);
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Person not found" });
+    }
+    res.status(201).json({ message: "Success", data: result.rows[0] });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

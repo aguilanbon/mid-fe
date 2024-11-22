@@ -9,7 +9,7 @@ export const fetchPeople = async (req, res) => {
   }
 };
 
-export const createPeople = async (req, res) => {
+export const createPerson = async (req, res) => {
   const { first_name, last_name, address } = req.body;
   try {
     const result = await pool.query(
@@ -24,7 +24,7 @@ export const createPeople = async (req, res) => {
   }
 };
 
-export const updatePeople = async (req, res) => {
+export const updatePerson = async (req, res) => {
   const { id } = req.params;
   const { first_name, last_name, address } = req.body;
   try {
@@ -33,13 +33,31 @@ export const updatePeople = async (req, res) => {
       [first_name, last_name, address, id]
     );
 
-    if (result.rows.length === 0) {
+    if (result.rowCount === 0) {
       return res.status(404).json({ message: "Person not found" });
     }
 
     res
       .status(200)
       .json({ message: "Person updated successfully", data: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const deletePerson = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query(
+      "DELETE FROM people WHERE id = $1 RETURNING *",
+      [id]
+    );
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Person not found" });
+    }
+    res
+      .status(200)
+      .json({ message: "Person deleted successfully", data: result.rows[0] });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

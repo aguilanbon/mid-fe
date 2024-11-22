@@ -3,6 +3,7 @@ import "./App.css";
 import Home from "./pages/Home";
 import CreateEdit from "./pages/CreateEdit";
 import Layout from "./components/Layout";
+import { TaskApiProvider } from "./context/TaskApiContext";
 
 function App() {
   const router = createBrowserRouter([
@@ -32,7 +33,11 @@ function App() {
     },
   ]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <TaskApiProvider>
+      <RouterProvider router={router} />
+    </TaskApiProvider>
+  );
 }
 
 export default App;

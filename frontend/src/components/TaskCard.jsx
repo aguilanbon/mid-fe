@@ -1,21 +1,21 @@
 import { Link } from "react-router-dom";
+import { useApi } from "../utils/useApi";
 
 export default function TaskCard({ task, onToggleComplete, onDeleteComplete }) {
+  const { baseURL, path } = useApi();
+
   const handleToggle = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/tasks/${task.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ...task,
-            completed: !task.completed,
-          }),
-        }
-      );
+      const response = await fetch(`${baseURL}${path}/${task.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...task,
+          completed: !task.completed,
+        }),
+      });
 
       if (response.ok) {
         onToggleComplete(task.id);
@@ -27,15 +27,12 @@ export default function TaskCard({ task, onToggleComplete, onDeleteComplete }) {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/tasks/${task.id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${baseURL}${path}/${task.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.ok) {
         onDeleteComplete(task.id);

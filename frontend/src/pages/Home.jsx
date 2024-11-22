@@ -2,16 +2,18 @@ import { Link } from "react-router-dom";
 import TaskCard from "../components/TaskCard";
 import { useEffect, useState } from "react";
 import LoadingIndicator from "../components/LoadingIndicator";
+import { useApi } from "../utils/useApi";
 
 export default function Home() {
   const [tasks, setTasks] = useState([]);
   const [loading, setIsLoading] = useState(false);
+  const { baseURL, path } = useApi();
 
   useEffect(() => {
     const fetchTasks = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch("http://localhost:3000/api/tasks");
+        const response = await fetch(`${baseURL}${path}`);
         if (response.ok) {
           const data = await response.json();
           const sortedTasks = sortTasks(data);
@@ -25,7 +27,7 @@ export default function Home() {
     };
 
     fetchTasks();
-  }, []);
+  }, [baseURL, path]);
 
   const sortTasks = (taskList) => {
     return [...taskList].sort((a, b) => {

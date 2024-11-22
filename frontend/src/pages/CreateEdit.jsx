@@ -2,12 +2,14 @@ import { useParams } from "react-router-dom";
 import TaskForm from "../components/TaskForm";
 import { useEffect, useState } from "react";
 import LoadingIndicator from "../components/LoadingIndicator";
+import { useApi } from "../utils/useApi";
 
 export default function CreateEdit() {
   const { id } = useParams();
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(false);
   const isEditMode = Boolean(id);
+  const { baseURL, path } = useApi();
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -15,7 +17,7 @@ export default function CreateEdit() {
 
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:3000/api/tasks/${id}`);
+        const response = await fetch(`${baseURL}${path}/${id}`);
         if (response.ok) {
           const data = await response.json();
           setTask(data.data);
@@ -30,13 +32,11 @@ export default function CreateEdit() {
     };
 
     fetchTask();
-  }, [id, isEditMode]);
+  }, [id, isEditMode, baseURL, path]);
 
   const handleSubmit = async (formData) => {
     try {
-      const url = isEditMode
-        ? `http://localhost:3000/api/tasks/${id}`
-        : "http://localhost:3000/api/tasks";
+      const url = isEditMode ? `${baseURL}${path}/${id}` : `${baseURL}${path}`;
 
       const taskData = isEditMode
         ? { ...formData, completed: task.completed }

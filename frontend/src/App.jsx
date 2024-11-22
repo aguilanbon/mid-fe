@@ -2,18 +2,25 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/Home";
 import CreateEdit from "./pages/CreateEdit";
+import Layout from "./components/Layout";
 
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Home />,
-      children: [
-        {
-          path: "/create",
-          element: <CreateEdit />,
-        },
-      ],
+      element: (
+        <Layout>
+          <Home />
+        </Layout>
+      ),
+    },
+    {
+      path: "/create",
+      element: (
+        <Layout>
+          <CreateEdit />
+        </Layout>
+      ),
     },
   ]);
 

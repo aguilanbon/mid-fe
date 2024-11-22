@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function TaskCard({ id, title, description }) {
   return (
-    <Link to={`/edit/${id}`}>
+    <Link to={`/edit/${id}`} className="w-full">
       <div className="w-full bg-white shadow-lg hover:shadow-xl p-4 rounded-md">
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-lg font-bold">{title}</h3>

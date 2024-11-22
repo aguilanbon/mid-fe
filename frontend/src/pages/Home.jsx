@@ -45,6 +45,13 @@ export default function Home() {
     });
   };
 
+  const handleDeleteComplete = (taskId) => {
+    setTasks((prevTasks) => {
+      const updatedTasks = prevTasks.filter((task) => task.id !== taskId);
+      return sortTasks(updatedTasks);
+    });
+  };
+
   if (loading) return <LoadingIndicator />;
 
   return (
@@ -64,6 +71,7 @@ export default function Home() {
               key={task.id}
               task={task}
               onToggleComplete={handleToggleComplete}
+              onDeleteComplete={handleDeleteComplete}
             />
           ))}
         </div>

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export default function TaskCard({ task, onToggleComplete }) {
+export default function TaskCard({ task, onToggleComplete, onDeleteComplete }) {
   const handleToggle = async () => {
     try {
       const response = await fetch(
@@ -19,6 +19,26 @@ export default function TaskCard({ task, onToggleComplete }) {
 
       if (response.ok) {
         onToggleComplete(task.id);
+      }
+    } catch (error) {
+      console.error("Error toggling task:", error);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/tasks/${task.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        onDeleteComplete(task.id);
       }
     } catch (error) {
       console.error("Error toggling task:", error);
@@ -67,6 +87,7 @@ export default function TaskCard({ task, onToggleComplete }) {
           strokeWidth={1.5}
           stroke="currentColor"
           className="size-4  hover:text-red-500 cursor-pointer"
+          onClick={handleDelete}
         >
           <path
             strokeLinecap="round"

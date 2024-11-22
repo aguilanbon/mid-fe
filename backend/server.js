@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-import peopleRouter from "./routes/people.route.js";
+import tasksRouter from "./routes/tasks.route.js";
 import { initDatabase } from "./config/db.js";
 dotenv.config();
 
@@ -9,7 +9,7 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-app.use("/api/people", peopleRouter);
+app.use("/api/tasks", tasksRouter);
 
 initDatabase().then(() => {
   app.listen(port, () => {

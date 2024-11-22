@@ -15,35 +15,35 @@ const pool = new Pool({
 export const initDatabase = async () => {
   try {
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS people (
+      CREATE TABLE IF NOT EXISTS tasks (
         id SERIAL PRIMARY KEY,
-        first_name VARCHAR(100) NOT NULL,
-        last_name VARCHAR(100) NOT NULL,
-        address TEXT NOT NULL,
+        title VARCHAR(100) NOT NULL,
+        description TEXT NOT NULL,
+        completed BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
-    const result = await pool.query("SELECT COUNT(*) FROM people");
+    const result = await pool.query("SELECT COUNT(*) FROM tasks");
 
     const count = parseInt(result.rows[0].count, 10);
     if (count === 0) {
       const randomData = [
         {
-          first_name: "Alice",
-          last_name: "Johnson",
-          address: "123 Elm Street",
+          title: "Read",
+          description: "do reading",
+          completed: false,
         },
-        { first_name: "Bob", last_name: "Smith", address: "456 Oak Avenue" },
-        { first_name: "Charlie", last_name: "Brown", address: "789 Pine Road" },
+        { title: "Write", description: "do writing", completed: false },
+        { title: "Delete", description: "do deleting", completed: false },
       ];
 
       for (const person of randomData) {
         await pool.query(
-          "INSERT INTO people (first_name, last_name, address) VALUES ($1, $2, $3)",
-          [person.first_name, person.last_name, person.address]
+          "INSERT INTO tasks (title, description, completed) VALUES ($1, $2, $3)",
+          [person.title, person.description, person.completed]
         );
-        console.log("Inserted 3 person into the database");
+        console.log("Inserted 3 tasks into the database");
       }
     }
   } catch (error) {

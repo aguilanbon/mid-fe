@@ -1,17 +1,30 @@
 import { Link } from "react-router-dom";
 import TaskCard from "../components/TaskCard";
 import LoadingIndicator from "../components/LoadingIndicator";
+import ErrorMessage from "../components/ErrorMessage";
 import useHomeTasksHooks from "../hooks/HomeTasksHooks";
 
 export default function Home() {
-  const { tasks, loading, error, handleToggleComplete, handleDeleteComplete } =
-    useHomeTasksHooks();
+  const {
+    tasks,
+    loading,
+    error,
+    handleToggleComplete,
+    handleDeleteComplete,
+    refetchTasks,
+  } = useHomeTasksHooks();
 
   if (loading) return <LoadingIndicator />;
 
   if (error) {
-    // You may want to add error handling UI here
-    console.error(error);
+    return (
+      <div className="w-full max-w-2xl mx-auto px-4">
+        <ErrorMessage
+          message={error.message || "Failed to load tasks"}
+          retry={refetchTasks}
+        />
+      </div>
+    );
   }
 
   return (

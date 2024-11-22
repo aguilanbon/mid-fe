@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useApi } from "../utils/useApi";
 
 export default function useCreateEditHooks(id, isEditMode) {
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(false);
   const { baseURL, path } = useApi();
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -21,6 +22,7 @@ export default function useCreateEditHooks(id, isEditMode) {
         }
       } catch (error) {
         console.error("Error fetching task:", error);
+        setError(error);
       } finally {
         setLoading(false);
       }
@@ -28,6 +30,32 @@ export default function useCreateEditHooks(id, isEditMode) {
 
     fetchTask();
   }, [id, isEditMode, baseURL, path]);
+
+  const fetchTask = useCallback(async () => {
+    if (!isEditMode) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`${baseURL}${path}/${id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setTask(data.data);
+      } else {
+        console.error("Task not found");
+      }
+    } catch (error) {
+      console.error("Error fetching task:", error);
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  }, [baseURL, id, isEditMode, path]);
+
+  useEffect(() => {
+    fetchTask();
+  }, [fetchTask]);
 
   const handleSubmit = async (formData) => {
     try {
@@ -55,5 +83,5 @@ export default function useCreateEditHooks(id, isEditMode) {
     }
   };
 
-  return { task, loading, handleSubmit };
+  return { task, loading, handleSubmit, error, refetchTask: fetchTask };
 }

@@ -1,31 +1,33 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useApi } from "../utils/useApi";
 
 export default function useHomeTasksHooks() {
   const [tasks, setTasks] = useState([]);
   const [loading, setIsLoading] = useState(false);
-  const [error, setIsError] = useState("");
+  const [error, setError] = useState(null);
   const { baseURL, path } = useApi();
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`${baseURL}${path}`);
-        if (response.ok) {
-          const data = await response.json();
-          const sortedTasks = sortTasks(data);
-          setTasks(sortedTasks);
-        }
-      } catch (error) {
-        setIsError(error);
-      } finally {
-        setIsLoading(false);
+  const fetchTasks = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`${baseURL}${path}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    };
-
-    fetchTasks();
+      const data = await response.json();
+      const sortedTasks = sortTasks(data);
+      setTasks(sortedTasks);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setIsLoading(false);
+    }
   }, [baseURL, path]);
+
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
 
   const sortTasks = (taskList) => {
     return [...taskList].sort((a, b) => {
@@ -58,5 +60,6 @@ export default function useHomeTasksHooks() {
     error,
     handleToggleComplete,
     handleDeleteComplete,
+    refetchTasks: fetchTasks,
   };
 }

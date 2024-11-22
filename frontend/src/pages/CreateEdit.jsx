@@ -37,12 +37,16 @@ export default function CreateEdit() {
         ? `http://localhost:3000/api/tasks/${id}`
         : "http://localhost:3000/api/tasks";
 
+      const taskData = isEditMode
+        ? { ...formData, completed: task.completed }
+        : { ...formData, completed: false };
+
       const response = await fetch(url, {
         method: isEditMode ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(taskData),
       });
 
       if (response.ok) {

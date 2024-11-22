@@ -16,6 +16,10 @@ export default function TaskForm({ initialData, onSubmit, mode = "create" }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit({ title, description });
+    if (!initialData) {
+      setTitle("");
+      setDescription("");
+    }
   };
 
   return (

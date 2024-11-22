@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import TaskCard from "../components/TaskCard";
 import { useEffect, useState } from "react";
+import LoadingIndicator from "../components/LoadingIndicator";
 
 export default function Home() {
   const [tasks, setTasks] = useState([]);
@@ -25,13 +26,7 @@ export default function Home() {
     fetchTasks();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="w-full min-h-full flex items-center justify-center">
-        <div className="animate-spin w-24 h-24 rounded-full border-2 border-t-transparent border-blue-500"></div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingIndicator />;
 
   return (
     <div className="w-full flex items-center justify-center">

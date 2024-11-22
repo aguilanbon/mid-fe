@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import TaskForm from "../components/TaskForm";
 import { useEffect, useState } from "react";
+import LoadingIndicator from "../components/LoadingIndicator";
 
 export default function CreateEdit() {
   const { id } = useParams();
@@ -59,13 +60,7 @@ export default function CreateEdit() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="w-full flex flex-col items-center justify-start py-8">
-        <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full"></div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingIndicator />;
 
   return (
     <div className="w-full flex flex-col items-center justify-start py-8">

@@ -1,31 +1,6 @@
-import { useContext } from "react";
 import { Link } from "react-router-dom";
-import TaskApiContext from "../context/TaskApiContext";
 
 export default function TaskCard({ task, onToggleComplete, onDeleteComplete }) {
-  const { updateTask, deleteTask } = useContext(TaskApiContext);
-
-  const handleToggle = async () => {
-    try {
-      await updateTask(task.id, {
-        ...task,
-        completed: !task.completed,
-      });
-      onToggleComplete(task.id);
-    } catch (error) {
-      console.error("Error toggling task:", error);
-    }
-  };
-
-  const handleDelete = async () => {
-    try {
-      await deleteTask(task.id);
-      onDeleteComplete(task.id);
-    } catch (error) {
-      console.error("Error deleting task:", error);
-    }
-  };
-
   return (
     <div
       className={`w-full bg-white shadow-lg hover:shadow-xl p-4 rounded-md space-y-2 ${
@@ -37,7 +12,7 @@ export default function TaskCard({ task, onToggleComplete, onDeleteComplete }) {
         <input
           type="checkbox"
           checked={task.completed}
-          onChange={handleToggle}
+          onChange={() => onToggleComplete(task.id)}
           className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
         />
       </div>
@@ -68,7 +43,7 @@ export default function TaskCard({ task, onToggleComplete, onDeleteComplete }) {
           strokeWidth={1.5}
           stroke="currentColor"
           className="size-4 hover:text-red-500 cursor-pointer"
-          onClick={handleDelete}
+          onClick={() => onDeleteComplete(task.id)}
         >
           <path
             strokeLinecap="round"

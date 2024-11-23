@@ -1,6 +1,7 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function TaskCard({ task, onToggleComplete, onDeleteComplete }) {
+  let navigate = useNavigate("/");
   return (
     <div
       className={`w-full bg-white shadow-lg hover:shadow-xl p-4 rounded-md space-y-2 ${
@@ -13,6 +14,11 @@ export default function TaskCard({ task, onToggleComplete, onDeleteComplete }) {
           type="checkbox"
           checked={task.completed}
           onChange={() => onToggleComplete(task.id)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              onToggleComplete(task.id);
+            }
+          }}
           className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
         />
       </div>
@@ -20,7 +26,14 @@ export default function TaskCard({ task, onToggleComplete, onDeleteComplete }) {
         {task.description}
       </p>
       <div className="flex justify-end space-x-4">
-        <Link to={`/edit/${task.id}`}>
+        <Link
+          to={`/edit/${task.id}`}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              navigate("/");
+            }
+          }}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -44,6 +57,12 @@ export default function TaskCard({ task, onToggleComplete, onDeleteComplete }) {
           stroke="currentColor"
           className="size-4 hover:text-red-500 cursor-pointer"
           onClick={() => onDeleteComplete(task.id)}
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              onDeleteComplete(task.id);
+            }
+          }}
         >
           <path
             strokeLinecap="round"

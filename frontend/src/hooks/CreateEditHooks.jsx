@@ -1,38 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
-import { useApi } from "../utils/useApi";
-import { toast } from "sonner";
+import { useCallback, useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import TaskApiContext from "../context/TaskApiContext";
 
 export default function useCreateEditHooks(id, isEditMode) {
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { baseURL, path } = useApi();
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchTask = async () => {
-      if (!isEditMode) return;
-
-      setLoading(true);
-      try {
-        const response = await fetch(`${baseURL}${path}/${id}`);
-        if (response.ok) {
-          const data = await response.json();
-          setTask(data.data);
-        } else {
-          console.error("Task not found");
-        }
-      } catch (error) {
-        console.error("Error fetching task:", error);
-        setError(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTask();
-  }, [id, isEditMode, baseURL, path]);
+  const { getTaskById, createTask, updateTask } = useContext(TaskApiContext);
 
   const fetchTask = useCallback(async () => {
     if (!isEditMode) return;
@@ -41,20 +16,15 @@ export default function useCreateEditHooks(id, isEditMode) {
     setError(null);
 
     try {
-      const response = await fetch(`${baseURL}${path}/${id}`);
-      if (response.ok) {
-        const data = await response.json();
-        setTask(data.data);
-      } else {
-        console.error("Task not found");
-      }
+      const data = await getTaskById(id);
+      setTask(data.data);
     } catch (error) {
       console.error("Error fetching task:", error);
       setError(error);
     } finally {
       setLoading(false);
     }
-  }, [baseURL, id, isEditMode, path]);
+  }, [getTaskById, id, isEditMode]);
 
   useEffect(() => {
     fetchTask();
@@ -62,29 +32,19 @@ export default function useCreateEditHooks(id, isEditMode) {
 
   const handleSubmit = async (formData) => {
     try {
-      const url = isEditMode ? `${baseURL}${path}/${id}` : `${baseURL}${path}`;
-
       const taskData = isEditMode
         ? { ...formData, completed: task.completed }
         : { ...formData, completed: false };
 
-      const response = await fetch(url, {
-        method: isEditMode ? "PUT" : "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(taskData),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        toast.success(data.message);
-        if (isEditMode) navigate("/");
+      if (isEditMode) {
+        await updateTask(id, taskData);
+        navigate("/");
       } else {
-        throw new Error("Failed to save task");
+        await createTask(taskData);
       }
     } catch (error) {
       console.error("Error saving task:", error);
+      setError(error);
     }
   };
 

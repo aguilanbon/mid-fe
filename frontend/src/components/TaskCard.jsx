@@ -1,26 +1,17 @@
+import { useContext } from "react";
 import { Link } from "react-router-dom";
-import { useApi } from "../utils/useApi";
-import { toast } from "sonner";
+import TaskApiContext from "../context/TaskApiContext";
 
 export default function TaskCard({ task, onToggleComplete, onDeleteComplete }) {
-  const { baseURL, path } = useApi();
+  const { updateTask, deleteTask } = useContext(TaskApiContext);
 
   const handleToggle = async () => {
     try {
-      const response = await fetch(`${baseURL}${path}/${task.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...task,
-          completed: !task.completed,
-        }),
+      await updateTask(task.id, {
+        ...task,
+        completed: !task.completed,
       });
-
-      if (response.ok) {
-        onToggleComplete(task.id);
-      }
+      onToggleComplete(task.id);
     } catch (error) {
       console.error("Error toggling task:", error);
     }
@@ -28,20 +19,10 @@ export default function TaskCard({ task, onToggleComplete, onDeleteComplete }) {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`${baseURL}${path}/${task.id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        toast.success(data.message);
-        onDeleteComplete(task.id);
-      }
+      await deleteTask(task.id);
+      onDeleteComplete(task.id);
     } catch (error) {
-      console.error("Error toggling task:", error);
+      console.error("Error deleting task:", error);
     }
   };
 
@@ -51,8 +32,8 @@ export default function TaskCard({ task, onToggleComplete, onDeleteComplete }) {
         task.completed === false ? "" : "line-through bg-zinc-200"
       }`}
     >
-      <div className="flex justify-between items-start  mb-2">
-        <h3 className={`text-lg font-bold `}>{task.title}</h3>
+      <div className="flex justify-between items-start mb-2">
+        <h3 className="text-lg font-bold">{task.title}</h3>
         <input
           type="checkbox"
           checked={task.completed}
@@ -64,14 +45,14 @@ export default function TaskCard({ task, onToggleComplete, onDeleteComplete }) {
         {task.description}
       </p>
       <div className="flex justify-end space-x-4">
-        <Link to={`/edit/${task.id}`} className="">
+        <Link to={`/edit/${task.id}`}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="size-4 hover:text-blue-500 "
+            className="size-4 hover:text-blue-500"
           >
             <path
               strokeLinecap="round"
@@ -86,7 +67,7 @@ export default function TaskCard({ task, onToggleComplete, onDeleteComplete }) {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="size-4  hover:text-red-500 cursor-pointer"
+          className="size-4 hover:text-red-500 cursor-pointer"
           onClick={handleDelete}
         >
           <path

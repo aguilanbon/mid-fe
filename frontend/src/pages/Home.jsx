@@ -31,8 +31,8 @@ export default function Home() {
 
   return (
     <div className="w-full flex items-center justify-center">
-      <div className="w-full max-w-5xl space-y-4 py-8 px-10">
-        <div className="w-full flex justify-between items-center">
+      <div className="w-full max-w-5xl space-y-4 py-8 px-4 sm:px-10">
+        <div className="w-full flex flex-col sm:flex-row justify-between items-center  space-y-2">
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}

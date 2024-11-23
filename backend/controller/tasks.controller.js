@@ -3,9 +3,17 @@ import pool from "../config/db.js";
 export const fetchTasks = async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM tasks");
-    res.status(201).json(result.rows);
+    res.status(200).json({
+      message: "Tasks fetched successfully",
+      error: false,
+      data: result.rows,
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({
+      message: err.message,
+      error: true,
+      data: null,
+    });
   }
 };
 
@@ -17,11 +25,17 @@ export const createTask = async (req, res) => {
       "INSERT INTO tasks (title, description, completed) VALUES ($1, $2, $3) RETURNING *",
       [title, description, completed]
     );
-    res
-      .status(201)
-      .json({ message: "Task created successfully", data: result.rows[0] });
+    res.status(201).json({
+      message: "Task created successfully",
+      error: false,
+      data: result.rows[0],
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({
+      message: err.message,
+      error: true,
+      data: null,
+    });
   }
 };
 
@@ -35,14 +49,24 @@ export const updateTask = async (req, res) => {
     );
 
     if (result.rowCount === 0) {
-      return res.status(404).json({ message: "Task not found" });
+      return res.status(404).json({
+        message: "Task with specified ID does not exist",
+        error: true,
+        data: null,
+      });
     }
 
-    res
-      .status(201)
-      .json({ message: "Task updated successfully", data: result.rows[0] });
+    res.status(200).json({
+      message: "Task updated successfully",
+      error: false,
+      data: result.rows[0],
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({
+      message: err.message,
+      error: true,
+      data: null,
+    });
   }
 };
 
@@ -54,13 +78,23 @@ export const deleteTask = async (req, res) => {
       [id]
     );
     if (result.rowCount === 0) {
-      return res.status(404).json({ message: "Task not found" });
+      return res.status(404).json({
+        message: "Task with specified ID does not exist",
+        error: true,
+        data: null,
+      });
     }
-    res
-      .status(201)
-      .json({ message: "Task deleted successfully", data: result.rows[0] });
+    res.status(200).json({
+      message: "Task deleted successfully",
+      error: false,
+      data: result.rows[0],
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({
+      message: err.message,
+      error: true,
+      data: null,
+    });
   }
 };
 
@@ -69,10 +103,22 @@ export const findTask = async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM tasks WHERE id = $1", [id]);
     if (result.rowCount === 0) {
-      return res.status(404).json({ message: "Task not found" });
+      return res.status(404).json({
+        message: "Task with specified ID does not exist",
+        error: true,
+        data: null,
+      });
     }
-    res.status(201).json({ message: "Success", data: result.rows[0] });
+    res.status(200).json({
+      message: "Task fetched successfully",
+      error: false,
+      data: result.rows[0],
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({
+      message: err.message,
+      error: true,
+      data: null,
+    });
   }
 };

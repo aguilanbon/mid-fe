@@ -16,7 +16,7 @@ export default function useHomeTasksHooks() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      const sortedTasks = sortTasks(data);
+      const sortedTasks = sortTasks(data.data);
       setTasks(sortedTasks);
     } catch (error) {
       setError(error);

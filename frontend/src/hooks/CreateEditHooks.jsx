@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { useApi } from "../utils/useApi";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export default function useCreateEditHooks(id, isEditMode) {
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(false);
   const { baseURL, path } = useApi();
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -74,7 +77,9 @@ export default function useCreateEditHooks(id, isEditMode) {
       });
 
       if (response.ok) {
-        console.log(response);
+        const data = await response.json();
+        toast.success(data.message);
+        if (isEditMode) navigate("/");
       } else {
         throw new Error("Failed to save task");
       }

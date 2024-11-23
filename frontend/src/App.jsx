@@ -5,6 +5,7 @@ import CreateEdit from "./pages/CreateEdit";
 import Layout from "./components/Layout";
 import { TaskApiProvider } from "./context/TaskApiContext";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { Toaster } from "sonner";
 
 function App() {
   const router = createBrowserRouter([
@@ -37,6 +38,7 @@ function App() {
   return (
     <ErrorBoundary>
       <TaskApiProvider>
+        <Toaster />
         <RouterProvider router={router} />
       </TaskApiProvider>
     </ErrorBoundary>

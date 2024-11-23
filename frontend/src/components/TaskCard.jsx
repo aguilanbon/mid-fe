@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useApi } from "../utils/useApi";
+import { toast } from "sonner";
 
 export default function TaskCard({ task, onToggleComplete, onDeleteComplete }) {
   const { baseURL, path } = useApi();
@@ -35,6 +36,8 @@ export default function TaskCard({ task, onToggleComplete, onDeleteComplete }) {
       });
 
       if (response.ok) {
+        const data = await response.json();
+        toast.success(data.message);
         onDeleteComplete(task.id);
       }
     } catch (error) {

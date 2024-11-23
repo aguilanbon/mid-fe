@@ -6,6 +6,7 @@ export default function useHomeTasksHooks() {
   const [loading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const { getAllTasks, updateTask, deleteTask } = useContext(TaskApiContext);
 
   const sortTasks = (taskList) => {
@@ -18,15 +19,29 @@ export default function useHomeTasksHooks() {
   };
 
   const getFilteredTasks = useCallback(() => {
+    let filteredTasks = tasks;
+
+    // First apply status filter
     switch (filter) {
       case "completed":
-        return tasks.filter((task) => task.completed);
+        filteredTasks = filteredTasks.filter((task) => task.completed);
+        break;
       case "active":
-        return tasks.filter((task) => !task.completed);
+        filteredTasks = filteredTasks.filter((task) => !task.completed);
+        break;
       default:
-        return tasks;
+        break;
     }
-  }, [tasks, filter]);
+
+    // Then apply search filter
+    if (searchQuery.trim()) {
+      filteredTasks = filteredTasks.filter((task) =>
+        task.title.toLowerCase().includes(searchQuery.toLowerCase().trim())
+      );
+    }
+
+    return filteredTasks;
+  }, [tasks, filter, searchQuery]);
 
   const fetchTasks = useCallback(async () => {
     setIsLoading(true);
@@ -83,6 +98,8 @@ export default function useHomeTasksHooks() {
     error,
     filter,
     setFilter,
+    searchQuery,
+    setSearchQuery,
     handleToggleComplete,
     handleDeleteComplete,
     refetchTasks: fetchTasks,

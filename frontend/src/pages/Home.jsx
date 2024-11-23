@@ -39,14 +39,20 @@ export default function Home() {
           </Link>
         </div>
         <div className="grid grid-cols-1 place-items-center items-center md:grid-cols-2 gap-6">
-          {tasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              onToggleComplete={handleToggleComplete}
-              onDeleteComplete={handleDeleteComplete}
-            />
-          ))}
+          {tasks.length > 0 ? (
+            tasks.map((task) => (
+              <TaskCard
+                key={task.id}
+                task={task}
+                onToggleComplete={handleToggleComplete}
+                onDeleteComplete={handleDeleteComplete}
+              />
+            ))
+          ) : (
+            <p className="text-gray-500 text-center col-span-full">
+              No tasks available.
+            </p>
+          )}
         </div>
       </div>
     </div>

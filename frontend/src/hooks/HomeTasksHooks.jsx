@@ -5,6 +5,7 @@ export default function useHomeTasksHooks() {
   const [tasks, setTasks] = useState([]);
   const [loading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [filter, setFilter] = useState("all");
   const { getAllTasks, updateTask, deleteTask } = useContext(TaskApiContext);
 
   const sortTasks = (taskList) => {
@@ -15,6 +16,17 @@ export default function useHomeTasksHooks() {
       return b.id - a.id;
     });
   };
+
+  const getFilteredTasks = useCallback(() => {
+    switch (filter) {
+      case "completed":
+        return tasks.filter((task) => task.completed);
+      case "active":
+        return tasks.filter((task) => !task.completed);
+      default:
+        return tasks;
+    }
+  }, [tasks, filter]);
 
   const fetchTasks = useCallback(async () => {
     setIsLoading(true);
@@ -66,9 +78,11 @@ export default function useHomeTasksHooks() {
   };
 
   return {
-    tasks,
+    tasks: getFilteredTasks(),
     loading,
     error,
+    filter,
+    setFilter,
     handleToggleComplete,
     handleDeleteComplete,
     refetchTasks: fetchTasks,

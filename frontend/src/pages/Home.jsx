@@ -9,6 +9,8 @@ export default function Home() {
     tasks,
     loading,
     error,
+    filter,
+    setFilter,
     handleToggleComplete,
     handleDeleteComplete,
     refetchTasks,
@@ -30,7 +32,16 @@ export default function Home() {
   return (
     <div className="w-full flex items-center justify-center">
       <div className="w-full max-w-5xl space-y-4 py-8 px-10">
-        <div className="w-full flex justify-end">
+        <div className="w-full flex justify-between items-center">
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="all">All Tasks</option>
+            <option value="active">Active Tasks</option>
+            <option value="completed">Completed Tasks</option>
+          </select>
           <Link
             to="/create"
             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
